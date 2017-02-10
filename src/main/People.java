@@ -8,8 +8,8 @@ public class People {
     private int age;
     private double salary;
 
-    public People() {
-        this("StandartName", 99, 99.0);
+    People() {
+        this("StandartName", 99, 66.6);
     }
 
     public void setAge(int age) {
@@ -32,7 +32,7 @@ public class People {
         return salary;
     }
 
-    public People(String name, int age, double salary) {
+    People(String name, int age, double salary) {
         this.name = name;
         this.age = age;
         this.salary = salary;
@@ -40,6 +40,6 @@ public class People {
 
     @Override
     public String toString(){
-        return name + " " + age + " age";
+        return name + " " + age + " age, " + salary + " salary";
     }
 }

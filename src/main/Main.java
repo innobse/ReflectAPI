@@ -15,13 +15,13 @@ import org.xml.sax.SAXException;
 public class Main {
 
     public static void main(String[] args) {
-	    People people = new People("Лалка", 99, 52.0);
+	    People people = new People();
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
         serialize(dbf, people);
 
-        People people1 = (People) deserialize(dbf, "sample1.xml");
+        People people1 = (People) deserialize(dbf, "sample.xml");
 
         System.out.println(people1);
 
@@ -57,12 +57,12 @@ public class Main {
             Document doc = builder.newDocument();
 
             Element mainE = doc.createElement("object");
-            mainE.setAttribute("type", obj.getClass().getCanonicalName());
+            mainE.setAttribute("type", obj.getClass().getName());
             Field[] fields = obj.getClass().getDeclaredFields();
             for (Field field : fields) {
                 field.setAccessible(true);
                 Element e = doc.createElement("field");
-                e.setAttribute("type", field.getType().getCanonicalName());
+                e.setAttribute("type", field.getType().getSimpleName());
                 e.setAttribute("id", field.getName());
                 try {
                     e.setAttribute("value", field.get(obj).toString());
@@ -90,7 +90,7 @@ public class Main {
         DOMSource source = new DOMSource(doc);
         StreamResult result = null;
         try {
-            result = new StreamResult(new FileOutputStream("sample1.xml"));
+            result = new StreamResult(new FileOutputStream("sample.xml"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -120,14 +120,14 @@ public class Main {
         Class targetClass = People.class;
         if (node.getNodeName().equals("object")){
             try {
-                //targetClass = Class.forName(node.getAttributes().getNamedItem("type").toString());
+                targetClass = Class.forName(node.getAttributes().getNamedItem("type").getNodeValue());
                 target = targetClass.newInstance();
+
+                //TODO Можно еще допилить для объектов без конструктора по-умолчанию
                 //Constructor<?>[] constructors = c.getConstructors();
                 //for (int i = 0; i < constructors.length; i++) {
-//
-                //}
-            //} catch (ClassNotFoundException e) {
-            //    e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InstantiationException e) {
@@ -173,7 +173,6 @@ public class Main {
 
     private static void setValue(Object obj, Field field, String val) throws IllegalAccessException{
         field.setAccessible(true);
-        System.out.println(field.getType().getSimpleName());
         switch(field.getType().getSimpleName().toString()){
             case "String":      field.set(obj, val); break;
             case "Integer" :

@@ -1,5 +1,1 @@
-<object type = “People”>
- <field type = “String” id = “name” value = “John”/>
- <field type = “Integer” id = “age” value = “20”/>
-<field type = “Double” id = “salaty” value = “20”/>
-</object>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><object type="main.People"><field id="name" type="String" value="StandartName"/><field id="age" type="int" value="99"/><field id="salary" type="double" value="66.6"/><method id="toString" return-type="String"/><method id="getName" return-type="String"/><method id="setAge" return-type="void"><param type="int"/></method><method id="setSalary" return-type="void"><param type="double"/></method><method id="getAge" return-type="int"/><method id="getSalary" return-type="double"/></object>
