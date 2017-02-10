@@ -1,0 +1,5 @@
+<object type = “People”>
+ <field type = “String” id = “name” value = “John”/>
+ <field type = “Integer” id = “age” value = “20”/>
+<field type = “Double” id = “salaty” value = “20”/>
+</object>
