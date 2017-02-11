@@ -175,20 +175,22 @@ public class Main {
         field.setAccessible(true);
         switch(field.getType().getSimpleName().toString()){
             case "String":      field.set(obj, val); break;
+            case "Boolean":
+            case "boolean":     field.setBoolean(obj, new Boolean(val)); break;
             case "Integer" :
-            case "int":         field.set(obj, Integer.parseInt(val)); break;
+            case "int":         field.setInt(obj, Integer.parseInt(val)); break;
             case "Short" :
-            case "short":       field.set(obj, Short.parseShort(val)); break;
+            case "short":       field.setShort(obj, Short.parseShort(val)); break;
             case "Byte" :
-            case "byte":        field.set(obj, Byte.parseByte(val)); break;
+            case "byte":        field.setByte(obj, Byte.parseByte(val)); break;
             case "Long" :
-            case "long":        field.set(obj, Long.parseLong(val)); break;
+            case "long":        field.setLong(obj, Long.parseLong(val)); break;
             case "Double" :
-            case "double":      field.set(obj, Double.parseDouble(val)); break;
+            case "double":      field.setDouble(obj, Double.parseDouble(val)); break;
             case "Float" :
-            case "float":       field.set(obj, Float.parseFloat(val)); break;
+            case "float":       field.setFloat(obj, Float.parseFloat(val)); break;
             case "Character" :
-            case "char":        field.set(obj, val.charAt(0)); break;
+            case "char":        field.setChar(obj, val.charAt(0)); break;
             default:            field.set(obj, val); break;
         }
     }
