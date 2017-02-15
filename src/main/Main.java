@@ -13,19 +13,37 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 public class Main {
+    private static final boolean SERIALIZE = false;
+    private static final MyClassLoader loader = new MyClassLoader(ClassLoader.getSystemClassLoader());
 
     public static void main(String[] args) {
-	    People people = new People();
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
-        serialize(dbf, people);
-
-        People people1 = (People) deserialize(dbf, "sample.xml");
-
-        System.out.println(people1);
-
+        Class<?> classAnimal = null;
+        try {
+            classAnimal = loader.loadClass("Animal",
+                    "https://github.com/innobse/ReflectAPI/raw/master/Animal.jar");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
+
+        Object monkey = null;
+
+        if (SERIALIZE){
+            try {
+                monkey = classAnimal.newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            serialize(dbf, monkey);
+        } else {
+            monkey = deserialize(dbf, "sample.xml");
+        }
+
+    }
 
         static Object deserialize(DocumentBuilderFactory dbf, String filePath){
             DocumentBuilder builder = null;
@@ -43,7 +61,7 @@ public class Main {
                 e.printStackTrace();
             }
 
-            return visit(doc, null);
+            return visit(doc,null , null);
 
         }
 
@@ -106,22 +124,26 @@ public class Main {
         }
     }
 
-    public static Object visit(Node node, Object target) {
+    public static Object[] visit(Node node, Class targetClass, Object target) {
         NodeList list = node.getChildNodes();
+        Object[] obj = null;
         for (int i = 0; i < list.getLength(); i++) {
             Node childNode = list.item(i);
-            target = process(childNode, target);
-            target = visit(childNode, target);
+            obj = process(childNode, targetClass, target);
+            obj = visit(childNode, (Class) obj[0], obj[1]);
         }
-        return target;
+        return obj;
     }
 
-    public static Object process(Node node, Object target) {
-        Class targetClass = People.class;
+    public static Object[] process(Node node, Class targetClass, Object target) {
+        Object[] result = new Object[2];
         if (node.getNodeName().equals("object")){
             try {
-                targetClass = Class.forName(node.getAttributes().getNamedItem("type").getNodeValue());
+                //targetClass = Class.forName(node.getAttributes().getNamedItem("type").getNodeValue());
+                targetClass = loader.loadClass("Animal",
+                        "https://github.com/innobse/ReflectAPI/raw/master/Animal.jar");
                 target = targetClass.newInstance();
+                System.out.println("Создан объект класса " + targetClass.getName());
 
                 //TODO Можно еще допилить для объектов без конструктора по-умолчанию
                 //Constructor<?>[] constructors = c.getConstructors();
@@ -139,36 +161,43 @@ public class Main {
         if (node instanceof Element){
             Element e = (Element) node;
             NamedNodeMap nnm = e.getAttributes();
-            if (!e.getTagName().equals("field")) return target;
-            Field tmpField = null;
-            String tmpValue = null;
-            for (Field f : targetClass.getDeclaredFields()) {
-                f.setAccessible(true);
-            }
-            for (int i = 0; i < nnm.getLength(); i++) {
-                Node tmpNode = nnm.item(i);
-                try {
-                    switch(tmpNode.getNodeName()){
-                        case "id":
-                            tmpField = targetClass.getDeclaredField(tmpNode.getNodeValue());
-                            tmpField.setAccessible(true);
-                            break;
-                        case "value":
-                            tmpValue = tmpNode.getNodeValue();
-                            break;
+            if (e.getTagName().equals("field")) {
+                Field tmpField = null;
+                String tmpValue = null;
+                for (Field f : targetClass.getDeclaredFields()) {
+                    f.setAccessible(true);
+                }
+                for (int i = 0; i < nnm.getLength(); i++) {
+                    Node tmpNode = nnm.item(i);
+                    try {
+                        switch (tmpNode.getNodeName()) {
+                            case "id":
+                                tmpField = targetClass.getDeclaredField(tmpNode.getNodeValue());
+                                tmpField.setAccessible(true);
+                                break;
+                            case "value":
+                                tmpValue = tmpNode.getNodeValue();
+                                break;
+                        }
+                    } catch (NoSuchFieldException e1) {
+                        e1.printStackTrace();
                     }
-                } catch (NoSuchFieldException e1) {
+                }
+                try {
+                    setValue(target, tmpField, tmpValue);
+                    System.out.println("Свойство " + tmpField.getName()
+                    + " объекта класса " + targetClass.getName() + " заполнено значением \'"
+                    + tmpValue + "\'");
+                } catch (IllegalAccessException e1) {
                     e1.printStackTrace();
                 }
             }
-            try {
-                setValue(target, tmpField, tmpValue);
-            } catch (IllegalAccessException e1) {
-                e1.printStackTrace();
-            }
         }
 
-        return target;
+
+        result[0] = targetClass;
+        result[1] = target;
+        return result;
     }
 
     private static void setValue(Object obj, Field field, String val) throws IllegalAccessException{
