@@ -6,7 +6,7 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fad4d18c-e350-4393-b4f9-f1324e541d67" name="Default" comment="">
+    <list default="true" id="fad4d18c-e350-4393-b4f9-f1324e541d67" name="Default" comment="- delete unusage">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -625,7 +625,7 @@
       <workItem from="1486800898308" duration="194000" />
       <workItem from="1487165743079" duration="6907000" />
       <workItem from="1487185674383" duration="3137000" />
-      <workItem from="1487189431771" duration="115000" />
+      <workItem from="1487189431771" duration="192000" />
     </task>
     <task id="LOCAL-00001" summary="fix kostyli">
       <created>1486763227967</created>
@@ -648,11 +648,18 @@
       <option name="project" value="LOCAL" />
       <updated>1487189496854</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="- delete unusage">
+      <created>1487189556312</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1487189556312</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="32345000" />
+    <option name="totallyTimeSpent" value="32422000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1370" height="744" extended-state="0" />
